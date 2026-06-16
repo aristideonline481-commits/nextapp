@@ -87,6 +87,8 @@ function RootShell({ children }: { children: ReactNode }) {
 import { auth } from "@/integrations/firebase/client";
 import { onAuthStateChanged } from "firebase/auth";
 import { AppHeader } from "@/components/AppHeader";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
@@ -109,6 +111,8 @@ function RootComponent() {
         <Outlet />
       </div>
       <Toaster />
+      <Analytics />
+      <SpeedInsights />
     </QueryClientProvider>
   );
 }
