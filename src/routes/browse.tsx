@@ -53,6 +53,10 @@ function Browse() {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <div className="mb-10">
+        <QuickContact />
+      </div>
+
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">Available rooms</h1>
@@ -62,10 +66,6 @@ function Browse() {
           <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Neighborhood or type…" className="h-11 rounded-full pl-9" />
         </div>
-      </div>
-
-      <div className="mt-6">
-        <QuickContact />
       </div>
 
       {isLoading ? (
