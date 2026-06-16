@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, KeyRound, Search, ShieldCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AppHeader } from "@/components/AppHeader";
 import heroImg from "@/assets/hero-room.jpg";
 import { motion } from "framer-motion";
 
@@ -34,8 +33,6 @@ const staggerContainer = {
 function Landing() {
   return (
     <div className="min-h-screen bg-cream selection:bg-primary/20 selection:text-primary font-sans text-ink">
-      <AppHeader />
-
       {/* Hero */}
       <section className="relative pt-12 pb-20 sm:pb-32 lg:pb-40 border-b border-border/60">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">

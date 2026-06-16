@@ -85,6 +85,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 import { auth } from "@/integrations/firebase/client";
 import { onAuthStateChanged } from "firebase/auth";
+import { AppHeader } from "@/components/AppHeader";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
@@ -102,7 +103,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <AppHeader />
+      <div className="pb-16 sm:pb-0">
+        <Outlet />
+      </div>
       <Toaster />
     </QueryClientProvider>
   );

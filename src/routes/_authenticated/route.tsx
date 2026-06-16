@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { auth } from "@/integrations/firebase/client";
 import { onAuthStateChanged } from "firebase/auth";
-import { AppHeader } from "@/components/AppHeader";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -21,8 +20,7 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthedLayout() {
   return (
-    <div className="min-h-screen bg-background">
-      <AppHeader />
+    <div className="min-h-screen bg-background pb-20 sm:pb-0">
       <Outlet />
     </div>
   );
