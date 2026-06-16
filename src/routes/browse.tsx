@@ -8,7 +8,7 @@ import { Loader2, Search as SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo } from "react";
 
-export const Route = createFileRoute("/_authenticated/browse")({
+export const Route = createFileRoute("/browse")({
   head: () => ({ meta: [{ title: "Browse rooms — NeXtpaSs" }] }),
   component: Browse,
 });

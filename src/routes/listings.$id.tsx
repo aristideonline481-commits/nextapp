@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 
-export const Route = createFileRoute("/_authenticated/listings/$id")({
+export const Route = createFileRoute("/listings/$id")({
   head: () => ({ meta: [{ title: "Listing — NeXtpaSs" }] }),
   component: ListingDetail,
 });
 
 function ListingDetail() {
-  const { id } = useParams({ from: "/_authenticated/listings/$id" });
+  const { id } = useParams({ from: "/listings/$id" });
 
   const { data, isLoading } = useQuery({
     queryKey: ["house", id],

@@ -10,19 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as AuthenticatedShareRouteImport } from './routes/_authenticated/share'
 import { Route as AuthenticatedMyListingsRouteImport } from './routes/_authenticated/my-listings'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
-import { Route as AuthenticatedBrowseRouteImport } from './routes/_authenticated/browse'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as AuthenticatedListingsIdRouteImport } from './routes/_authenticated/listings.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrowseRoute = BrowseRouteImport.update({
+  id: '/browse',
+  path: '/browse',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -37,6 +42,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListingsIdRoute = ListingsIdRouteImport.update({
+  id: '/listings/$id',
+  path: '/listings/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedShareRoute = AuthenticatedShareRouteImport.update({
@@ -54,65 +64,55 @@ const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedBrowseRoute = AuthenticatedBrowseRouteImport.update({
-  id: '/browse',
-  path: '/browse',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedListingsIdRoute = AuthenticatedListingsIdRouteImport.update({
-  id: '/listings/$id',
-  path: '/listings/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/browse': typeof BrowseRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
-  '/browse': typeof AuthenticatedBrowseRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/my-listings': typeof AuthenticatedMyListingsRoute
   '/share': typeof AuthenticatedShareRoute
-  '/listings/$id': typeof AuthenticatedListingsIdRoute
+  '/listings/$id': typeof ListingsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/browse': typeof BrowseRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
-  '/browse': typeof AuthenticatedBrowseRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/my-listings': typeof AuthenticatedMyListingsRoute
   '/share': typeof AuthenticatedShareRoute
-  '/listings/$id': typeof AuthenticatedListingsIdRoute
+  '/listings/$id': typeof ListingsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/browse': typeof BrowseRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
-  '/_authenticated/browse': typeof AuthenticatedBrowseRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/my-listings': typeof AuthenticatedMyListingsRoute
   '/_authenticated/share': typeof AuthenticatedShareRoute
-  '/_authenticated/listings/$id': typeof AuthenticatedListingsIdRoute
+  '/listings/$id': typeof ListingsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/browse'
     | '/sitemap.xml'
     | '/admin'
-    | '/browse'
     | '/history'
     | '/my-listings'
     | '/share'
@@ -121,9 +121,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/browse'
     | '/sitemap.xml'
     | '/admin'
-    | '/browse'
     | '/history'
     | '/my-listings'
     | '/share'
@@ -133,20 +133,22 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/browse'
     | '/sitemap.xml'
     | '/_authenticated/admin'
-    | '/_authenticated/browse'
     | '/_authenticated/history'
     | '/_authenticated/my-listings'
     | '/_authenticated/share'
-    | '/_authenticated/listings/$id'
+    | '/listings/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  BrowseRoute: typeof BrowseRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ListingsIdRoute: typeof ListingsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -156,6 +158,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/browse': {
+      id: '/browse'
+      path: '/browse'
+      fullPath: '/browse'
+      preLoaderRoute: typeof BrowseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -179,6 +188,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/listings/$id': {
+      id: '/listings/$id'
+      path: '/listings/$id'
+      fullPath: '/listings/$id'
+      preLoaderRoute: typeof ListingsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/share': {
       id: '/_authenticated/share'
       path: '/share'
@@ -200,13 +216,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHistoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/browse': {
-      id: '/_authenticated/browse'
-      path: '/browse'
-      fullPath: '/browse'
-      preLoaderRoute: typeof AuthenticatedBrowseRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -214,32 +223,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/listings/$id': {
-      id: '/_authenticated/listings/$id'
-      path: '/listings/$id'
-      fullPath: '/listings/$id'
-      preLoaderRoute: typeof AuthenticatedListingsIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
-  AuthenticatedBrowseRoute: typeof AuthenticatedBrowseRoute
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
   AuthenticatedMyListingsRoute: typeof AuthenticatedMyListingsRoute
   AuthenticatedShareRoute: typeof AuthenticatedShareRoute
-  AuthenticatedListingsIdRoute: typeof AuthenticatedListingsIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
-  AuthenticatedBrowseRoute: AuthenticatedBrowseRoute,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
   AuthenticatedMyListingsRoute: AuthenticatedMyListingsRoute,
   AuthenticatedShareRoute: AuthenticatedShareRoute,
-  AuthenticatedListingsIdRoute: AuthenticatedListingsIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -249,7 +247,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  BrowseRoute: BrowseRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ListingsIdRoute: ListingsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

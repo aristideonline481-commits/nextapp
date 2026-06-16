@@ -54,7 +54,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   --shadow-soft: 0 1px 2px oklch(0.21 0.04 260 / 0.06), 0 8px 24px -12px oklch(0.21 0.04 260 / 0.18);
-  --shadow-glow: 0 10px 40px -10px oklch(0.66 0.18 40 / 0.45);
+  --shadow-glow: 0 10px 40px -10px oklch(0.66 0.18 40 / 0.25);
 }
 
 :root {
@@ -139,4 +139,10 @@
   html, body { background-color: var(--color-background); color: var(--color-foreground); }
   body { font-family: var(--font-sans); font-feature-settings: "ss01", "cv11"; }
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80;
+  }
 }
