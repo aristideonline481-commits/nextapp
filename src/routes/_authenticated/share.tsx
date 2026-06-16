@@ -127,7 +127,7 @@ function ShareRoom() {
         insertPayload.landlord_phone = landlordPhone;
       }
       
-      const houseId = crypto.randomUUID();
+
       const uploadedImages = [];
 
       // Upload media to Cloudinary
