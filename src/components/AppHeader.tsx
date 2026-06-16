@@ -66,64 +66,77 @@ export function AppHeader() {
             <span className="font-display text-2xl font-bold tracking-tight text-gradient transition-transform group-hover:scale-105">paSs</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden sm:flex items-center gap-2">
-            <NavItem to="/browse" active={isBrowse} icon={<Search className="h-4 w-4" />} label="Browse" />
-            {user ? (
-              <>
-                <NavItem to="/share" active={isShare} icon={<Plus className="h-4 w-4" />} label="Share" />
-                {hasListings && <NavItem to="/my-listings" active={isMine} icon={<HomeIcon className="h-4 w-4" />} label="Mine" />}
-                <NavItem to="/history" active={isHistory} icon={<History className="h-4 w-4" />} label="History" />
-                {isAdmin && (
-                  <NavItem to="/admin" active={pathname === "/admin"} icon={<ShieldCheck className="h-4 w-4" />} label="Team" />
-                )}
-                {isAdmin && (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-verified/15 px-2 py-0.5 text-xs font-semibold text-verified shadow-sm ml-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-verified animate-pulse" />
-                    Admin
-                  </span>
-                )}
-                <Button variant="ghost" size="sm" onClick={signOut} className="ml-2 hover:bg-destructive/10 hover:text-destructive transition-colors">
-                  <LogOut className="h-4 w-4" />
-                  <span className="ml-2">Sign out</span>
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link to="/auth"><Button variant="ghost" size="sm" className="hover:bg-primary/10 transition-colors ml-2">Sign in</Button></Link>
-                <Link to="/auth">
-                  <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-glow hover:shadow-none transition-all hover:-translate-y-0.5 ml-2">
-                    Get started
-                  </Button>
-                </Link>
-              </>
-            )}
-          </nav>
-
-          {/* Mobile Header Icons (Hamburger) */}
-          <div className="flex sm:hidden items-center">
+          {/* Unified Hamburger Menu */}
+          <div className="flex items-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-10 w-10 text-ink">
                   <Menu className="h-6 w-6" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl">
+                {/* Primary Navigation inside Menu */}
+                <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
+                  <Link to="/browse" className="flex items-center w-full">
+                    <Search className="mr-3 h-5 w-5" />
+                    <span className="text-base font-medium">Browse</span>
+                  </Link>
+                </DropdownMenuItem>
+                
+                {user && (
+                  <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
+                    <Link to="/share" className="flex items-center w-full">
+                      <Plus className="mr-3 h-5 w-5" />
+                      <span className="text-base font-medium">Share</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                
+                {user && hasListings && (
+                  <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
+                    <Link to="/my-listings" className="flex items-center w-full">
+                      <HomeIcon className="mr-3 h-5 w-5" />
+                      <span className="text-base font-medium">My Listings</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                
+                {user && (
+                  <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
+                    <Link to="/history" className="flex items-center w-full">
+                      <History className="mr-3 h-5 w-5" />
+                      <span className="text-base font-medium">History</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                
+                {isAdmin && (
+                  <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
+                    <Link to="/admin" className="flex items-center w-full">
+                      <ShieldCheck className="mr-3 h-5 w-5 text-verified" />
+                      <span className="text-base font-medium text-verified">Admin Team</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                
+                <div className="h-px bg-border my-2 mx-1" />
+
                 {user ? (
-                  <>
-                    {isAdmin && <DropdownMenuItem asChild><Link to="/admin" className="w-full cursor-pointer">Admin Team</Link></DropdownMenuItem>}
-                    <DropdownMenuItem onClick={signOut} className="text-destructive cursor-pointer">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Sign out
-                    </DropdownMenuItem>
-                  </>
+                  <DropdownMenuItem onClick={signOut} className="text-destructive cursor-pointer py-3 rounded-lg focus:bg-destructive/10 focus:text-destructive">
+                    <LogOut className="mr-3 h-5 w-5" />
+                    <span className="text-base font-medium">Sign out</span>
+                  </DropdownMenuItem>
                 ) : (
                   <>
-                    <DropdownMenuItem asChild>
-                      <Link to="/auth" className="w-full cursor-pointer">Sign in</Link>
+                    <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
+                      <Link to="/auth" className="flex items-center w-full">
+                        <span className="text-base font-medium">Sign in</span>
+                      </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/auth" className="w-full cursor-pointer text-primary font-medium">Get started</Link>
+                    <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg bg-primary/10 mt-1 focus:bg-primary/20">
+                      <Link to="/auth" className="flex items-center w-full text-primary">
+                        <span className="text-base font-bold">Get started</span>
+                      </Link>
                     </DropdownMenuItem>
                   </>
                 )}
@@ -144,26 +157,7 @@ export function AppHeader() {
   );
 }
 
-function NavItem({ to, active, icon, label }: { to: string; active: boolean; icon: React.ReactNode; label: string }) {
-  return (
-    <Link to={to} className="relative px-3 py-1.5 text-sm font-medium transition-colors group">
-      {active && (
-        <motion.div
-          layoutId="navbar-indicator"
-          className="absolute inset-0 rounded-full bg-primary/10 border border-primary/20"
-          transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
-        />
-      )}
-      <span className={`relative z-10 flex items-center gap-2 ${active ? "text-primary" : "text-ink/70 group-hover:text-ink"}`}>
-        {icon}
-        <span>{label}</span>
-      </span>
-      {!active && (
-        <span className="absolute inset-0 rounded-full bg-muted opacity-0 transition-opacity group-hover:opacity-100 -z-10" />
-      )}
-    </Link>
-  );
-}
+
 
 function MobileNavItem({ to, active, icon, label }: { to: string; active: boolean; icon: React.ReactNode; label: string }) {
   return (
