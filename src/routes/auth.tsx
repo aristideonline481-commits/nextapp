@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { auth, db } from "@/integrations/firebase/client";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,7 +47,23 @@ function AuthPage() {
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const { user } = await signInWithPopup(auth, provider);
+      
+      const roleRef = doc(db, "user_roles", user.uid);
+      const roleSnap = await getDoc(roleRef);
+      if (!roleSnap.exists()) {
+        await setDoc(roleRef, { role: "client" });
+      }
+
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          full_name: user.displayName || "",
+          email: user.email || "",
+          created_at: new Date().toISOString()
+        });
+      }
     } catch (error: any) {
       toast.error(error.message ?? "Google sign-in failed");
       setLoading(false);
@@ -75,6 +91,11 @@ function AuthPage() {
           phone: parsed.data.phone,
           email: parsed.data.email,
           created_at: new Date().toISOString()
+        });
+        
+        // Set default client role
+        await setDoc(doc(db, "user_roles", user.uid), {
+          role: "client"
         });
         
         toast.success("Welcome to NeXtpaSs!");
