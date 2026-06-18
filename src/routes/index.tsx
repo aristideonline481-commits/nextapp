@@ -17,64 +17,64 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="flex flex-col min-h-screen bg-background font-sans text-ink">
-
+    <div className="flex flex-col min-h-screen font-sans text-ink relative">
+      {/* Background Video */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <video 
+          src={heroVideo} 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          className="absolute inset-0 w-full h-full object-cover" 
+        />
+        {/* Overlay for readability */}
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-[2px]" />
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col px-6 sm:px-8 pt-12 pb-10 max-w-md mx-auto w-full">
+      <main className="relative z-10 flex-1 flex flex-col px-6 sm:px-8 pt-16 pb-10 max-w-md mx-auto w-full">
         <motion.div 
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="font-display text-[44px] font-bold leading-[1.1] tracking-tight">
+          <h1 className="font-display text-[48px] font-bold leading-[1.1] tracking-tight">
             Move in <br />
             <span className="text-primary">smarter.</span>
           </h1>
-          <p className="mt-5 text-lg text-ink/70 leading-relaxed font-medium pr-4">
+          <p className="mt-5 text-lg text-ink/80 leading-relaxed font-medium pr-4">
             Find rooms, take over leases, sell your stuff and move without stress.
           </p>
         </motion.div>
 
-        {/* Illustration Placeholder */}
-        <motion.div 
-          className="my-10 relative flex-1 min-h-[220px] flex items-center justify-center"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-        >
-          <div className="w-full max-w-[280px] aspect-square bg-accent/30 rounded-full flex items-center justify-center overflow-hidden border border-border/50 shadow-inner">
-             <video src={heroVideo} autoPlay loop muted playsInline className="w-full h-full object-cover mix-blend-multiply opacity-80" />
-          </div>
-        </motion.div>
-
         {/* Buttons */}
         <motion.div 
-          className="flex flex-col gap-4 mt-auto"
+          className="flex flex-col gap-4 mt-auto pt-12"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <Link to="/browse" className="w-full">
-            <button className="w-full flex items-center bg-primary text-primary-foreground rounded-[20px] p-4 transition-transform hover:scale-[1.02] shadow-sm">
-              <div className="h-12 w-12 rounded-full border border-white/20 flex items-center justify-center shrink-0">
+            <button className="w-full flex items-center bg-primary text-primary-foreground rounded-[20px] p-4 transition-transform hover:scale-[1.02] shadow-sm backdrop-blur-md">
+              <div className="h-12 w-12 rounded-full border border-white/20 flex items-center justify-center shrink-0 bg-white/10">
                 <Search className="h-6 w-6" strokeWidth={2} />
               </div>
               <div className="ml-4 text-left">
                 <div className="font-bold text-[17px]">Find a Room</div>
-                <div className="text-[13px] text-primary-foreground/80 font-medium">Browse available rooms</div>
+                <div className="text-[13px] text-primary-foreground/90 font-medium">Browse available rooms</div>
               </div>
             </button>
           </Link>
 
           <Link to="/share" className="w-full">
-            <button className="w-full flex items-center bg-transparent border border-border/80 text-ink rounded-[20px] p-4 transition-all hover:bg-accent/30">
-              <div className="h-12 w-12 rounded-full border border-border/80 flex items-center justify-center shrink-0">
+            <button className="w-full flex items-center bg-background/60 border border-border/80 text-ink rounded-[20px] p-4 transition-all hover:bg-background/80 backdrop-blur-md shadow-sm">
+              <div className="h-12 w-12 rounded-full border border-border/80 flex items-center justify-center shrink-0 bg-background/50">
                 <Plus className="h-6 w-6 text-ink" strokeWidth={2} />
               </div>
               <div className="ml-4 text-left">
                 <div className="font-bold text-[17px]">Post Your Room</div>
-                <div className="text-[13px] text-muted-foreground font-medium">List your room in minutes</div>
+                <div className="text-[13px] text-ink/70 font-medium">List your room in minutes</div>
               </div>
             </button>
           </Link>
@@ -87,7 +87,7 @@ function Landing() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <p className="text-[13px] text-muted-foreground font-medium max-w-[240px] mx-auto leading-relaxed">
+          <p className="text-[13px] text-ink/60 font-medium max-w-[240px] mx-auto leading-relaxed">
             Join thousands of students and tenants finding their next place.
           </p>
           
