@@ -47,7 +47,8 @@ type MediaFile = { file: File; preview: string; caption: string; isVideo: boolea
 function ShareRoom() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const totalSteps = 6;
+  const totalSteps = 7;
+  const [publishedHouseId, setPublishedHouseId] = useState<string | null>(null);
   
   const [formData, setFormData] = useState<Record<string, any>>({
     house_type: "room",
@@ -100,10 +101,11 @@ function ShareRoom() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (step < totalSteps) {
+    if (step < 6) {
       nextStep();
       return;
     }
+    if (step === 7) return;
 
     const raw = { ...formData };
     const parsed = schema.safeParse(raw);
@@ -158,10 +160,11 @@ function ShareRoom() {
       insertPayload.created_at = serverTimestamp();
 
       // Insert the house doc into Firestore
-      await addDoc(collection(db, "houses"), insertPayload);
+      const docRef = await addDoc(collection(db, "houses"), insertPayload);
 
       toast.success("Listing published! Browsers can now see it.");
-      navigate({ to: "/my-listings" });
+      setPublishedHouseId(docRef.id);
+      setStep(7);
     } catch (err: any) {
       toast.error(err.message ?? "Could not publish listing");
     } finally {
@@ -382,23 +385,65 @@ function ShareRoom() {
             </div>
           )}
 
+          {/* STEP 7: MARKETPLACE PROMPT */}
+          {step === 7 && (
+            <div className="space-y-6 flex flex-col items-center justify-center text-center py-10 animate-in zoom-in-95 duration-500">
+              <div className="h-20 w-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <Check className="h-10 w-10 text-green-600" />
+              </div>
+              <h1 className="font-display text-3xl font-semibold tracking-tight">Room Published!</h1>
+              <p className="text-muted-foreground text-lg max-w-[280px]">
+                Before you go, do you have any items to sell (like a fridge, bed, or desk)?
+              </p>
+              
+              <div className="w-full flex flex-col gap-3 pt-6">
+                <Button 
+                  type="button"
+                  onClick={() => navigate({ 
+                    to: "/market-post", 
+                    search: { 
+                      house_id: publishedHouseId, 
+                      city: formData.city, 
+                      neighborhood: formData.neighborhood, 
+                      name: formData.poster_name, 
+                      phone: formData.poster_phone 
+                    } 
+                  })}
+                  className="h-14 rounded-2xl text-lg w-full"
+                >
+                  Yes, I have things to sell
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => navigate({ to: "/my-listings" })}
+                  className="h-14 rounded-2xl text-lg w-full text-muted-foreground"
+                >
+                  No, take me to my listings
+                </Button>
+              </div>
+            </div>
+          )}
+
         </div>
 
         {/* BOTTOM NAVIGATION */}
-        <div className="sticky bottom-0 mt-8 flex items-center justify-between border-t bg-background/80 py-4 backdrop-blur-md">
-          <Button type="button" variant="ghost" onClick={prevStep} disabled={step === 1 || loading} className="h-12 px-6 rounded-full">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back
-          </Button>
-          
-          <Button type="submit" disabled={loading} className="h-12 px-8 rounded-full shadow-md transition-transform hover:scale-105 active:scale-95">
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (
-              <>
-                {step === totalSteps ? "Publish Listing" : "Continue"} 
-                {step < totalSteps && <ArrowRight className="ml-2 h-4 w-4" />}
-              </>
-            )}
-          </Button>
-        </div>
+        {step < 7 && (
+          <div className="sticky bottom-0 mt-8 flex items-center justify-between border-t bg-background/80 py-4 backdrop-blur-md">
+            <Button type="button" variant="ghost" onClick={prevStep} disabled={step === 1 || loading} className="h-12 px-6 rounded-full">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            </Button>
+            
+            <Button type="submit" disabled={loading} className="h-12 px-8 rounded-full shadow-md transition-transform hover:scale-105 active:scale-95">
+              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (
+                <>
+                  {step === 6 ? "Publish Listing" : "Continue"} 
+                  {step < 6 && <ArrowRight className="ml-2 h-4 w-4" />}
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </form>
     </main>
   );

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as MarketRouteImport } from './routes/market'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -17,12 +18,18 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as AuthenticatedShareRouteImport } from './routes/_authenticated/share'
 import { Route as AuthenticatedMyListingsRouteImport } from './routes/_authenticated/my-listings'
+import { Route as AuthenticatedMarketPostRouteImport } from './routes/_authenticated/market-post'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketRoute = MarketRouteImport.update({
+  id: '/market',
+  path: '/market',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BrowseRoute = BrowseRouteImport.update({
@@ -59,6 +66,11 @@ const AuthenticatedMyListingsRoute = AuthenticatedMyListingsRouteImport.update({
   path: '/my-listings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMarketPostRoute = AuthenticatedMarketPostRouteImport.update({
+  id: '/market-post',
+  path: '/market-post',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
   id: '/history',
   path: '/history',
@@ -74,9 +86,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
+  '/market': typeof MarketRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/history': typeof AuthenticatedHistoryRoute
+  '/market-post': typeof AuthenticatedMarketPostRoute
   '/my-listings': typeof AuthenticatedMyListingsRoute
   '/share': typeof AuthenticatedShareRoute
   '/listings/$id': typeof ListingsIdRoute
@@ -85,9 +99,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
+  '/market': typeof MarketRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/history': typeof AuthenticatedHistoryRoute
+  '/market-post': typeof AuthenticatedMarketPostRoute
   '/my-listings': typeof AuthenticatedMyListingsRoute
   '/share': typeof AuthenticatedShareRoute
   '/listings/$id': typeof ListingsIdRoute
@@ -98,9 +114,11 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
+  '/market': typeof MarketRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
+  '/_authenticated/market-post': typeof AuthenticatedMarketPostRoute
   '/_authenticated/my-listings': typeof AuthenticatedMyListingsRoute
   '/_authenticated/share': typeof AuthenticatedShareRoute
   '/listings/$id': typeof ListingsIdRoute
@@ -111,9 +129,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/browse'
+    | '/market'
     | '/sitemap.xml'
     | '/admin'
     | '/history'
+    | '/market-post'
     | '/my-listings'
     | '/share'
     | '/listings/$id'
@@ -122,9 +142,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/browse'
+    | '/market'
     | '/sitemap.xml'
     | '/admin'
     | '/history'
+    | '/market-post'
     | '/my-listings'
     | '/share'
     | '/listings/$id'
@@ -134,9 +156,11 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/browse'
+    | '/market'
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/history'
+    | '/_authenticated/market-post'
     | '/_authenticated/my-listings'
     | '/_authenticated/share'
     | '/listings/$id'
@@ -147,6 +171,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   BrowseRoute: typeof BrowseRoute
+  MarketRoute: typeof MarketRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ListingsIdRoute: typeof ListingsIdRoute
 }
@@ -158,6 +183,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/market': {
+      id: '/market'
+      path: '/market'
+      fullPath: '/market'
+      preLoaderRoute: typeof MarketRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/browse': {
@@ -209,6 +241,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMyListingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/market-post': {
+      id: '/_authenticated/market-post'
+      path: '/market-post'
+      fullPath: '/market-post'
+      preLoaderRoute: typeof AuthenticatedMarketPostRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/history': {
       id: '/_authenticated/history'
       path: '/history'
@@ -229,6 +268,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
+  AuthenticatedMarketPostRoute: typeof AuthenticatedMarketPostRoute
   AuthenticatedMyListingsRoute: typeof AuthenticatedMyListingsRoute
   AuthenticatedShareRoute: typeof AuthenticatedShareRoute
 }
@@ -236,6 +276,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
+  AuthenticatedMarketPostRoute: AuthenticatedMarketPostRoute,
   AuthenticatedMyListingsRoute: AuthenticatedMyListingsRoute,
   AuthenticatedShareRoute: AuthenticatedShareRoute,
 }
@@ -248,6 +289,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   BrowseRoute: BrowseRoute,
+  MarketRoute: MarketRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ListingsIdRoute: ListingsIdRoute,
 }
