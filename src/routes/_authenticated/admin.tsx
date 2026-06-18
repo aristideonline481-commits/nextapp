@@ -184,7 +184,14 @@ function MarketPanel() {
     queryFn: async () => {
       const q = query(collection(db, "market_items"), orderBy("created_at", "desc"));
       const snap = await getDocs(q);
-      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+      return snap.docs.map(doc => {
+        const data = doc.data() as any;
+        return { 
+          id: doc.id, 
+          ...data,
+          cover_path: data.images?.[0] ?? null,
+        };
+      });
     },
   });
 
