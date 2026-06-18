@@ -1,9 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { db } from "@/integrations/firebase/client";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
 import { HouseCard, type HouseSummary } from "@/components/HouseCard";
-import { Loader2, Search as SearchIcon } from "lucide-react";
+import { Loader2, Search as SearchIcon, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo } from "react";
 
@@ -13,6 +13,7 @@ export const Route = createFileRoute("/browse")({
 });
 
 function Browse() {
+  const navigate = useNavigate();
   const [q, setQ] = useState("");
 
   const { data, isLoading } = useQuery({
@@ -84,6 +85,14 @@ function Browse() {
           </div>
         </>
       )}
+
+      {/* Floating Action Button for Sharing a House */}
+      <button 
+        onClick={() => navigate({ to: "/share" })}
+        className="fixed bottom-24 right-6 sm:right-auto sm:ml-[340px] z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+      >
+        <Plus className="h-7 w-7" strokeWidth={2.5} />
+      </button>
     </main>
   );
 }

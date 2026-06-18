@@ -76,20 +76,11 @@ export function AppHeader() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56 p-2 rounded-xl mt-2">
                 <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
-                  <Link to="/" className="flex items-center w-full">
+                  <Link to="/browse" className="flex items-center w-full">
                     <CustomHomeIcon className="mr-3 h-6 w-6" />
-                    <span className="text-base font-bold uppercase tracking-wide">HOME</span>
+                    <span className="text-base font-bold uppercase tracking-wide">HOUSING SERVICE</span>
                   </Link>
                 </DropdownMenuItem>
-                
-                {user && (
-                  <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
-                    <Link to="/share" className="flex items-center w-full">
-                      <CustomShareIcon className="mr-3 h-6 w-6" />
-                      <span className="text-base font-bold uppercase tracking-wide">SHARE A PLACE</span>
-                    </Link>
-                  </DropdownMenuItem>
-                )}
                 
                 <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
                   <Link to="/market" className="flex items-center w-full">
