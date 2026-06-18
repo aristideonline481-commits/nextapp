@@ -67,11 +67,11 @@ export function AppHeader() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-10 w-10 -ml-2 hover:bg-transparent">
-                  <div className="flex flex-col gap-[5px] w-6 items-start justify-center text-primary">
-                    <div className="h-[3px] w-full bg-current" />
-                    <div className="h-[3px] w-[75%] bg-current" />
-                    <div className="h-[3px] w-[45%] bg-current" />
-                  </div>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="6" width="18" height="2.5" />
+                    <rect x="3" y="11.5" width="13.5" height="2.5" />
+                    <rect x="3" y="17" width="9" height="2.5" />
+                  </svg>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56 p-2 rounded-xl mt-2">
