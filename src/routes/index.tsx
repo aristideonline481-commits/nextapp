@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, Plus } from "lucide-react";
-import heroImg from "@/assets/hero-room.jpg";
+import heroVideo from "@/assets/background video-onmovein.mp4";
 import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/")({
@@ -44,7 +44,7 @@ function Landing() {
           transition={{ duration: 0.8, delay: 0.1 }}
         >
           <div className="w-full max-w-[280px] aspect-square bg-accent/30 rounded-full flex items-center justify-center overflow-hidden border border-border/50 shadow-inner">
-             <img src={heroImg} alt="Room" className="w-full h-full object-cover mix-blend-multiply opacity-80" />
+             <video src={heroVideo} autoPlay loop muted playsInline className="w-full h-full object-cover mix-blend-multiply opacity-80" />
           </div>
         </motion.div>
 

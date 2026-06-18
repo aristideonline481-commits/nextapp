@@ -77,16 +77,16 @@ export function AppHeader() {
               <DropdownMenuContent align="start" className="w-56 p-2 rounded-xl mt-2">
                 <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
                   <Link to="/browse" className="flex items-center w-full">
-                    <HomeIcon className="mr-3 h-5 w-5" />
-                    <span className="text-base font-medium">Home</span>
+                    <CustomHomeIcon className="mr-3 h-6 w-6" />
+                    <span className="text-base font-bold uppercase tracking-wide">HOME</span>
                   </Link>
                 </DropdownMenuItem>
                 
                 {user && (
                   <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
                     <Link to="/share" className="flex items-center w-full">
-                      <Plus className="mr-3 h-5 w-5" />
-                      <span className="text-base font-medium">Post Room</span>
+                      <CustomShareIcon className="mr-3 h-6 w-6" />
+                      <span className="text-base font-bold uppercase tracking-wide">SHARE A PLACE</span>
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -94,7 +94,7 @@ export function AppHeader() {
                 {user && hasListings && (
                   <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
                     <Link to="/my-listings" className="flex items-center w-full">
-                      <HomeIcon className="mr-3 h-5 w-5" />
+                      <CustomHomeIcon className="mr-3 h-6 w-6" />
                       <span className="text-base font-medium">My Listings</span>
                     </Link>
                   </DropdownMenuItem>
@@ -103,8 +103,8 @@ export function AppHeader() {
                 {user && (
                   <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
                     <Link to="/history" className="flex items-center w-full">
-                      <History className="mr-3 h-5 w-5" />
-                      <span className="text-base font-medium">History</span>
+                      <CustomHistoryIcon className="mr-3 h-6 w-6" />
+                      <span className="text-base font-bold uppercase tracking-wide">HISTORY</span>
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -176,5 +176,32 @@ function MobileNavItem({ to, active, icon, label }: { to: string; active: boolea
       {icon}
       <span className="text-[10px] font-medium leading-none">{label}</span>
     </Link>
+  );
+}
+
+function CustomHomeIcon({ className }: { className?: string }) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 2v4H3v4h12v4H3v4h12v4h4V2h-4z" className="text-primary" />
+    </svg>
+  );
+}
+
+function CustomShareIcon({ className }: { className?: string }) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="1" />
+      <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="4" className="text-primary" />
+    </svg>
+  );
+}
+
+function CustomHistoryIcon({ className }: { className?: string }) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path d="M4.5 12a7.5 7.5 0 1 0 7.5-7.5 7.5 7.5 0 0 0-5.3 2.2L4.5 9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter" className="text-primary" />
+      <path d="M4.5 4v5h5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter" className="text-primary" />
+      <path d="M12 7v5l3.5 2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter" className="text-primary" />
+    </svg>
   );
 }
