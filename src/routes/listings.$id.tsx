@@ -36,6 +36,7 @@ function ListingDetail() {
   });
 
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+  const [mediaAspect, setMediaAspect] = useState<"landscape" | "portrait">("landscape");
 
   if (isLoading) return <div className="flex justify-center py-24"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
   if (!data) return <div className="mx-auto max-w-3xl px-4 py-16 text-center"><p className="text-muted-foreground">Listing not found.</p></div>;
@@ -59,20 +60,29 @@ function ListingDetail() {
 
       {/* Media Carousel */}
       {images.length > 0 && (
-        <div className="mt-6 relative w-full aspect-[4/3] sm:aspect-[21/9] overflow-hidden rounded-3xl bg-black group shadow-sm">
-          <MediaViewer media={images[activeMediaIndex]} />
+        <div 
+          className={`mt-6 relative w-full overflow-hidden rounded-3xl bg-black group shadow-sm transition-all duration-500 mx-auto ${
+            mediaAspect === "portrait" 
+              ? "aspect-[3/4] sm:aspect-auto sm:max-w-md sm:h-[70vh]" 
+              : "aspect-[4/3] sm:aspect-[16/9]"
+          }`}
+        >
+          <MediaViewer 
+            media={images[activeMediaIndex]} 
+            onMediaLoaded={(isPortrait) => setMediaAspect(isPortrait ? "portrait" : "landscape")} 
+          />
           
           {images.length > 1 && (
             <>
               <button 
                 onClick={prevMedia} 
-                className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-black/70 sm:opacity-0 sm:group-hover:opacity-100"
+                className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-black/70 sm:opacity-0 sm:group-hover:opacity-100 z-10"
               >
                 <ChevronLeft className="h-6 w-6" />
               </button>
               <button 
                 onClick={nextMedia} 
-                className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-black/70 sm:opacity-0 sm:group-hover:opacity-100"
+                className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-all hover:bg-black/70 sm:opacity-0 sm:group-hover:opacity-100 z-10"
               >
                 <ChevronRight className="h-6 w-6" />
               </button>
@@ -81,12 +91,12 @@ function ListingDetail() {
 
           {/* Caption Overlay */}
           {images[activeMediaIndex]?.caption && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-white text-sm font-medium">
+            <div className="absolute bottom-6 left-1/2 w-[90%] max-w-md -translate-x-1/2 px-4 py-2 rounded-2xl bg-black/60 backdrop-blur-md text-white text-sm font-medium text-center z-10 shadow-lg">
               {images[activeMediaIndex].caption}
             </div>
           )}
 
-          <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md text-white text-xs font-semibold tracking-wide">
+          <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md text-white text-xs font-bold tracking-wider z-10">
             {activeMediaIndex + 1} / {images.length}
           </div>
         </div>
@@ -184,12 +194,10 @@ function ListingDetail() {
   );
 }
 
-function MediaViewer({ media }: { media: any }) {
+function MediaViewer({ media, onMediaLoaded }: { media: any; onMediaLoaded: (isPortrait: boolean) => void }) {
   if (!media?.url) return <div className="h-full w-full bg-muted" />;
   
   // Parse video based on URL or firebase token if it has one.
-  // Assuming URL will contain common extensions or token signature if it's a video. 
-  // It's better to store media_type in firestore, but for now we regex.
   const isVideo = media.url.match(/\.(mp4|webm|ogg|mov)(\?|$)/i) || media.type?.startsWith("video/");
 
   if (isVideo) {
@@ -201,11 +209,25 @@ function MediaViewer({ media }: { media: any }) {
         autoPlay 
         muted 
         loop
+        onLoadedMetadata={(e) => {
+          const video = e.target as HTMLVideoElement;
+          onMediaLoaded(video.videoHeight > video.videoWidth);
+        }}
       />
     );
   }
 
-  return <img src={media.url} alt="" className="h-full w-full object-cover animate-in fade-in duration-500" />;
+  return (
+    <img 
+      src={media.url} 
+      alt="" 
+      className="h-full w-full object-contain animate-in fade-in duration-500" 
+      onLoad={(e) => {
+        const img = e.target as HTMLImageElement;
+        onMediaLoaded(img.naturalHeight > img.naturalWidth);
+      }}
+    />
+  );
 }
 
 function RuleRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
