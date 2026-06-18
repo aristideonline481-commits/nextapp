@@ -33,24 +33,25 @@ function Landing() {
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 flex-1 flex flex-col px-6 sm:px-8 pt-16 pb-10 max-w-md mx-auto w-full">
+      <main className="relative z-10 flex-1 flex flex-col justify-center px-6 sm:px-8 py-12 max-w-md mx-auto w-full">
         <motion.div 
+          className="mb-12"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="font-display text-[48px] font-bold leading-[1.1] tracking-tight">
+          <h1 className="font-display text-[48px] font-bold leading-[1.1] tracking-tight text-center sm:text-left">
             Move in <br />
             <span className="text-primary">smarter.</span>
           </h1>
-          <p className="mt-5 text-lg text-ink/80 leading-relaxed font-medium pr-4">
+          <p className="mt-5 text-lg text-ink/80 leading-relaxed font-medium text-center sm:text-left">
             Find rooms, take over leases, sell your stuff and move without stress.
           </p>
         </motion.div>
 
         {/* Buttons */}
         <motion.div 
-          className="flex flex-col gap-4 mt-auto pt-12"
+          className="flex flex-col gap-4 mt-8"
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -82,7 +83,7 @@ function Landing() {
 
         {/* Footer Note */}
         <motion.div 
-          className="mt-8 text-center"
+          className="mt-12 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
