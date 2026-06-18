@@ -17,6 +17,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as AuthenticatedShareRouteImport } from './routes/_authenticated/share'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedMyListingsRouteImport } from './routes/_authenticated/my-listings'
 import { Route as AuthenticatedMarketPostRouteImport } from './routes/_authenticated/market-post'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
@@ -61,6 +62,11 @@ const AuthenticatedShareRoute = AuthenticatedShareRouteImport.update({
   path: '/share',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMyListingsRoute = AuthenticatedMyListingsRouteImport.update({
   id: '/my-listings',
   path: '/my-listings',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/history': typeof AuthenticatedHistoryRoute
   '/market-post': typeof AuthenticatedMarketPostRoute
   '/my-listings': typeof AuthenticatedMyListingsRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/share': typeof AuthenticatedShareRoute
   '/listings/$id': typeof ListingsIdRoute
 }
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/history': typeof AuthenticatedHistoryRoute
   '/market-post': typeof AuthenticatedMarketPostRoute
   '/my-listings': typeof AuthenticatedMyListingsRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/share': typeof AuthenticatedShareRoute
   '/listings/$id': typeof ListingsIdRoute
 }
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/market-post': typeof AuthenticatedMarketPostRoute
   '/_authenticated/my-listings': typeof AuthenticatedMyListingsRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/share': typeof AuthenticatedShareRoute
   '/listings/$id': typeof ListingsIdRoute
 }
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/market-post'
     | '/my-listings'
+    | '/profile'
     | '/share'
     | '/listings/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/market-post'
     | '/my-listings'
+    | '/profile'
     | '/share'
     | '/listings/$id'
   id:
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/_authenticated/history'
     | '/_authenticated/market-post'
     | '/_authenticated/my-listings'
+    | '/_authenticated/profile'
     | '/_authenticated/share'
     | '/listings/$id'
   fileRoutesById: FileRoutesById
@@ -234,6 +246,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedShareRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/my-listings': {
       id: '/_authenticated/my-listings'
       path: '/my-listings'
@@ -270,6 +289,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
   AuthenticatedMarketPostRoute: typeof AuthenticatedMarketPostRoute
   AuthenticatedMyListingsRoute: typeof AuthenticatedMyListingsRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedShareRoute: typeof AuthenticatedShareRoute
 }
 
@@ -278,6 +298,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
   AuthenticatedMarketPostRoute: AuthenticatedMarketPostRoute,
   AuthenticatedMyListingsRoute: AuthenticatedMyListingsRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedShareRoute: AuthenticatedShareRoute,
 }
 

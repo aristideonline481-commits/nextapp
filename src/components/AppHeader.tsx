@@ -76,7 +76,7 @@ export function AppHeader() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56 p-2 rounded-xl mt-2">
                 <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
-                  <Link to="/browse" className="flex items-center w-full">
+                  <Link to="/" className="flex items-center w-full">
                     <CustomHomeIcon className="mr-3 h-6 w-6" />
                     <span className="text-base font-bold uppercase tracking-wide">HOME</span>
                   </Link>
@@ -98,11 +98,11 @@ export function AppHeader() {
                   </Link>
                 </DropdownMenuItem>
 
-                {user && hasListings && (
+                {user && (
                   <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
-                    <Link to="/my-listings" className="flex items-center w-full">
-                      <CustomHomeIcon className="mr-3 h-6 w-6" />
-                      <span className="text-base font-medium">My Listings</span>
+                    <Link to="/profile" className="flex items-center w-full">
+                      <User className="mr-3 h-6 w-6 text-primary" />
+                      <span className="text-base font-bold uppercase tracking-wide">PROFILE</span>
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -125,14 +125,7 @@ export function AppHeader() {
                   </DropdownMenuItem>
                 )}
                 
-                <div className="h-px bg-border my-2 mx-1" />
-
-                {user ? (
-                  <DropdownMenuItem onClick={signOut} className="text-destructive cursor-pointer py-3 rounded-lg focus:bg-destructive/10 focus:text-destructive">
-                    <LogOut className="mr-3 h-5 w-5" />
-                    <span className="text-base font-medium">Sign out</span>
-                  </DropdownMenuItem>
-                ) : (
+                {!user && (
                   <>
                     <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
                       <Link to="/auth" className="flex items-center w-full">
@@ -168,7 +161,7 @@ export function AppHeader() {
 
       {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden items-center justify-around bg-background border-t border-border/50 h-[72px] pb-safe">
-        <MobileNavItem to="/browse" active={isBrowse} icon={<HomeIcon className="h-6 w-6" />} label="Home" />
+        <MobileNavItem to="/" active={isBrowse} icon={<HomeIcon className="h-6 w-6" />} label="Home" />
         <MobileNavItem to="/profile" active={!isBrowse} icon={<User className="h-6 w-6" />} label="Profile" />
       </div>
     </>
