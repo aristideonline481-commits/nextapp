@@ -1,14 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { auth, db } from "@/integrations/firebase/client";
-import { doc, getDoc, collection, query, orderBy, getDocs, updateDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, orderBy, getDocs } from "firebase/firestore";
 import { Badge } from "@/components/ui/badge";
 import { fmtFCFA } from "@/lib/format";
-import { Loader2, Phone, User as UserIcon, MessageCircle, GraduationCap, MapPin, Home, Bath, ChefHat, Wifi } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, Phone, User as UserIcon, MessageCircle, GraduationCap, MapPin, Home, Bath, ChefHat, Wifi, Search, Users, ShoppingBag, Calendar, Mail } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { MarketCard } from "@/components/MarketCard";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Team dashboard — NeXtpaSs" }] }),
@@ -43,100 +44,77 @@ function Admin() {
 }
 
 function AdminBoard() {
+  const [activeTab, setActiveTab] = useState("overview");
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <h1 className="font-display text-3xl font-semibold sm:text-4xl">Team dashboard</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Full visibility on listings, posters, and incoming visit requests.</p>
+      <p className="mt-1 text-sm text-muted-foreground">Full visibility on listings, users, and market items.</p>
 
-      <Tabs defaultValue="requests" className="mt-8">
-        <TabsList className="rounded-full bg-muted p-1">
-          <TabsTrigger value="requests" className="rounded-full">Visit requests</TabsTrigger>
-          <TabsTrigger value="listings" className="rounded-full">All listings</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
+        <TabsList className="rounded-2xl bg-muted p-1 flex flex-wrap h-auto gap-1">
+          <TabsTrigger value="overview" className="rounded-xl">Overview</TabsTrigger>
+          <TabsTrigger value="listings" className="rounded-xl">Housing</TabsTrigger>
+          <TabsTrigger value="market" className="rounded-xl">Marketplace</TabsTrigger>
+          <TabsTrigger value="users" className="rounded-xl">Users</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="requests" className="mt-6"><RequestsPanel /></TabsContent>
+        <TabsContent value="overview" className="mt-6"><OverviewPanel setTab={setActiveTab} /></TabsContent>
         <TabsContent value="listings" className="mt-6"><ListingsPanel /></TabsContent>
+        <TabsContent value="market" className="mt-6"><MarketPanel /></TabsContent>
+        <TabsContent value="users" className="mt-6"><UsersPanel /></TabsContent>
       </Tabs>
     </main>
   );
 }
 
-function RequestsPanel() {
-  const qc = useQueryClient();
-
-  const { data: requests, isLoading } = useQuery({
-    queryKey: ["admin-requests"],
+function OverviewPanel({ setTab }: { setTab: (tab: string) => void }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin-overview"],
     queryFn: async () => {
-      const q = query(collection(db, "visit_requests"), orderBy("created_at", "desc"));
-      const snap = await getDocs(q);
-      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+      const [users, houses, market] = await Promise.all([
+        getDocs(collection(db, "users")),
+        getDocs(collection(db, "houses")),
+        getDocs(collection(db, "market_items")),
+      ]);
+      return {
+        usersCount: users.size,
+        housesCount: houses.size,
+        marketCount: market.size,
+      };
     },
-  });
-
-  const updateStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      await updateDoc(doc(db, "visit_requests", id), { status });
-    },
-    onSuccess: () => { toast.success("Updated"); qc.invalidateQueries({ queryKey: ["admin-requests"] }); },
-    onError: (e: any) => toast.error(e.message),
   });
 
   if (isLoading) return <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
-  if (!requests || requests.length === 0) return <div className="rounded-2xl border border-dashed bg-card p-12 text-center text-sm text-muted-foreground">No requests yet.</div>;
 
   return (
-    <div className="space-y-4">
-      {requests.map((r: any) => {
-        return (
-          <div key={r.id} className="rounded-2xl border bg-card p-5 shadow-soft">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <Link to="/listings/$id" params={{ id: r.house_id }} className="min-w-0">
-                <h3 className="font-display text-lg font-semibold">{r.house_title}</h3>
-                <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
-                  <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {r.house_neighborhood}, {r.house_city}</span>
-                  <span className="inline-flex items-center gap-1 capitalize"><Home className="h-3.5 w-3.5" /> {r.house_type}</span>
-                  <span className="font-medium text-ink">{fmtFCFA(r.rent_fcfa ?? 0)}/mo</span>
-                </div>
-              </Link>
-              <div className="flex items-center gap-2">
-                <Badge className="capitalize" variant="outline">{r.status}</Badge>
-                <Select value={r.status} onValueChange={(v) => updateStatus.mutate({ id: r.id, status: v })}>
-                  <SelectTrigger className="h-9 w-36"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="requested">Requested</SelectItem>
-                    <SelectItem value="scheduled">Scheduled</SelectItem>
-                    <SelectItem value="visited">Visited</SelectItem>
-                    <SelectItem value="closed">Closed (matched)</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+    <div className="grid gap-4 sm:grid-cols-3">
+      <KPICard title="Total Users" value={data?.usersCount} icon={<Users className="h-5 w-5 text-primary" />} onClick={() => setTab("users")} />
+      <KPICard title="Housing Listings" value={data?.housesCount} icon={<Home className="h-5 w-5 text-primary" />} onClick={() => setTab("listings")} />
+      <KPICard title="Market Items" value={data?.marketCount} icon={<ShoppingBag className="h-5 w-5 text-primary" />} onClick={() => setTab("market")} />
+    </div>
+  );
+}
 
-            {r.message && <p className="mt-3 rounded-lg bg-muted p-3 text-sm">"{r.message}"</p>}
-
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <ContactCard
-                label="Incoming student"
-                name={r.requester_name}
-                phone={r.requester_phone}
-              />
-              <ContactCard
-                label="Departing student (poster)"
-                name={r.poster_name}
-                phone={r.poster_phone}
-                whatsapp={r.poster_whatsapp}
-                school={r.poster_school}
-              />
-            </div>
-          </div>
-        );
-      })}
+function KPICard({ title, value, icon, onClick }: { title: string; value?: number; icon: React.ReactNode; onClick?: () => void }) {
+  return (
+    <div 
+      onClick={onClick}
+      className={`rounded-3xl border bg-card p-6 shadow-sm flex items-center justify-between ${onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""}`}
+    >
+      <div>
+        <p className="text-sm font-medium text-muted-foreground">{title}</p>
+        <h3 className="mt-2 text-3xl font-display font-bold text-ink">{value ?? 0}</h3>
+      </div>
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+        {icon}
+      </div>
     </div>
   );
 }
 
 function ListingsPanel() {
+  const [search, setSearch] = useState("");
   const { data, isLoading } = useQuery({
     queryKey: ["admin-listings"],
     queryFn: async () => {
@@ -147,15 +125,27 @@ function ListingsPanel() {
   });
 
   if (isLoading) return <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
-  if (!data || data.length === 0) return <div className="rounded-2xl border border-dashed bg-card p-12 text-center text-sm text-muted-foreground">No listings yet.</div>;
+  
+  const filtered = data?.filter(h => 
+    h.title?.toLowerCase().includes(search.toLowerCase()) || 
+    h.neighborhood?.toLowerCase().includes(search.toLowerCase()) ||
+    h.poster_name?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="space-y-4">
-      {data.map((h: any) => (
-        <div key={h.id} className="rounded-2xl border bg-card p-5 shadow-soft">
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input placeholder="Search listings..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 rounded-full" />
+      </div>
+
+      {(!filtered || filtered.length === 0) && <div className="rounded-3xl border border-dashed bg-card p-12 text-center text-sm text-muted-foreground">No listings found.</div>}
+      
+      {filtered?.map((h: any) => (
+        <div key={h.id} className="rounded-3xl border bg-card p-5 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <Link to="/listings/$id" params={{ id: h.id }} className="min-w-0">
-              <h3 className="font-display text-lg font-semibold">{h.title}</h3>
+              <h3 className="font-display text-lg font-semibold hover:text-primary hover:underline transition-colors">{h.title}</h3>
               <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
                 <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {h.neighborhood}, {h.city}</span>
                 <span className="inline-flex items-center gap-1 capitalize"><Home className="h-3.5 w-3.5" /> {h.house_type}</span>
@@ -187,24 +177,138 @@ function ListingsPanel() {
   );
 }
 
+function MarketPanel() {
+  const [search, setSearch] = useState("");
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin-market"],
+    queryFn: async () => {
+      const q = query(collection(db, "market_items"), orderBy("created_at", "desc"));
+      const snap = await getDocs(q);
+      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+    },
+  });
+
+  if (isLoading) return <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+  
+  const filtered = data?.filter(m => 
+    m.title?.toLowerCase().includes(search.toLowerCase()) || 
+    m.poster_name?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input placeholder="Search market items..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 rounded-full" />
+      </div>
+
+      {(!filtered || filtered.length === 0) && <div className="rounded-3xl border border-dashed bg-card p-12 text-center text-sm text-muted-foreground">No market items found.</div>}
+      
+      {filtered?.map((m: any) => (
+        <div key={m.id} className="rounded-3xl border bg-card p-5 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <h3 className="font-display text-lg font-semibold hover:text-primary hover:underline transition-colors cursor-pointer">{m.title}</h3>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[360px] p-0 border-none bg-transparent shadow-none">
+                  <MarketCard item={m} />
+                </DialogContent>
+              </Dialog>
+              <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+                <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {m.neighborhood}, {m.city}</span>
+                <span className="font-medium text-ink">{fmtFCFA(m.price_fcfa)}</span>
+              </div>
+            </div>
+            <Badge variant="outline" className="capitalize">{m.status}</Badge>
+          </div>
+
+          {m.description && <p className="mt-3 text-sm text-muted-foreground line-clamp-2">{m.description}</p>}
+
+          <div className="mt-4">
+            <ContactCard
+              label="Seller"
+              name={m.poster_name}
+              phone={m.poster_phone}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function UsersPanel() {
+  const [search, setSearch] = useState("");
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: async () => {
+      const q = query(collection(db, "users"), orderBy("created_at", "desc"));
+      const snap = await getDocs(q);
+      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
+    },
+  });
+
+  if (isLoading) return <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+  
+  const filtered = data?.filter(u => 
+    u.full_name?.toLowerCase().includes(search.toLowerCase()) || 
+    u.email?.toLowerCase().includes(search.toLowerCase()) ||
+    u.phone?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input placeholder="Search users by name, email..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 rounded-full" />
+      </div>
+
+      {(!filtered || filtered.length === 0) && <div className="rounded-3xl border border-dashed bg-card p-12 text-center text-sm text-muted-foreground">No users found.</div>}
+      
+      {filtered?.map((u: any) => (
+        <div key={u.id} className="rounded-3xl border bg-card p-5 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <span className="font-bold text-lg">{u.full_name?.slice(0, 2).toUpperCase() || <UserIcon className="h-5 w-5" />}</span>
+            </div>
+            <div>
+              <h3 className="font-display text-lg font-semibold">{u.full_name || "Unknown User"}</h3>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-1 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> {u.email || "No email"}</span>
+                {u.phone && <span className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5" /> {u.phone}</span>}
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t flex items-center justify-between text-xs text-muted-foreground">
+            <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> Joined {new Date(u.created_at).toLocaleDateString()}</span>
+            <span className="font-mono bg-muted px-2 py-1 rounded-md text-[10px]">ID: {u.id}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ContactCard({ label, name, phone, whatsapp, school }: { label: string; name?: string; phone?: string; whatsapp?: boolean; school?: string }) {
   const waNumber = phone?.replace(/[^\d]/g, "");
   return (
-    <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
-      <div className="text-xs font-medium uppercase tracking-wide text-primary">{label}</div>
-      <div className="mt-1 flex items-center gap-2 text-sm"><UserIcon className="h-3.5 w-3.5 text-muted-foreground" /> {name ?? "—"}</div>
-      {school && <div className="flex items-center gap-2 text-sm text-muted-foreground"><GraduationCap className="h-3.5 w-3.5" /> {school}</div>}
-      <div className="flex items-center gap-2 text-sm">
-        <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-        {phone ? <a href={`tel:${phone}`} className="hover:underline">{phone}</a> : "—"}
+    <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 shadow-sm">
+      <div className="text-xs font-bold uppercase tracking-wide text-primary">{label}</div>
+      <div className="mt-2 flex items-center gap-2 text-sm font-medium"><UserIcon className="h-4 w-4 text-muted-foreground" /> {name ?? "—"}</div>
+      {school && <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground"><GraduationCap className="h-4 w-4" /> {school}</div>}
+      <div className="mt-2 pt-2 border-t border-primary/10 flex items-center gap-3 text-sm">
+        <Phone className="h-4 w-4 text-muted-foreground" />
+        {phone ? <a href={`tel:${phone}`} className="font-medium hover:underline">{phone}</a> : "—"}
         {phone && whatsapp && waNumber && (
           <a
             href={`https://wa.me/${waNumber}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-full bg-verified/15 px-2 py-0.5 text-xs font-medium text-verified hover:bg-verified/25"
+            className="inline-flex items-center gap-1.5 rounded-full bg-verified/15 px-2.5 py-1 text-xs font-bold text-verified hover:bg-verified/25 transition-colors ml-auto"
           >
-            <MessageCircle className="h-3 w-3" /> WhatsApp
+            <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
           </a>
         )}
       </div>
