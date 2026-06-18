@@ -4,7 +4,7 @@ import { auth, db } from "@/integrations/firebase/client";
 import { onAuthStateChanged, signOut as firebaseSignOut } from "firebase/auth";
 import { doc, getDoc, collection, query, where, limit, getDocs } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
-import { LogOut, Home as HomeIcon, Plus, Search, History, ShieldCheck, Menu, Bell, User } from "lucide-react";
+import { LogOut, Home as HomeIcon, Plus, Search, History, ShieldCheck, Bell, User } from "lucide-react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -66,8 +66,12 @@ export function AppHeader() {
           <div className="flex items-center z-10">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10 text-ink -ml-2">
-                  <Menu className="h-6 w-6" />
+                <Button variant="ghost" size="icon" className="h-10 w-10 -ml-2 hover:bg-transparent">
+                  <div className="flex flex-col gap-[5px] w-6 items-start justify-center text-primary">
+                    <div className="h-[3px] w-full bg-current" />
+                    <div className="h-[3px] w-[75%] bg-current" />
+                    <div className="h-[3px] w-[45%] bg-current" />
+                  </div>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56 p-2 rounded-xl mt-2">

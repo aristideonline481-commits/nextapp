@@ -18,14 +18,7 @@ export const Route = createFileRoute("/")({
 function Landing() {
   return (
     <div className="flex flex-col min-h-screen bg-background font-sans text-ink">
-      {/* Header with Logo only */}
-      <header className="w-full pt-10 px-6 sm:px-8 max-w-md mx-auto">
-        <div className="flex items-baseline font-display text-2xl font-bold tracking-tight">
-          <span className="text-ink">On</span>
-          <span className="text-primary">Move</span>
-          <span className="text-ink">In</span>
-        </div>
-      </header>
+
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col px-6 sm:px-8 pt-12 pb-10 max-w-md mx-auto w-full">
