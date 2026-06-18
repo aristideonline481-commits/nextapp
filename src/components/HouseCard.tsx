@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { MapPin, Users } from "lucide-react";
+import { MapPin, Users, Heart, Wifi } from "lucide-react";
 import { fmtFCFA } from "@/lib/format";
 import { useSignedImage } from "@/lib/useSignedImage";
 import { Badge } from "@/components/ui/badge";
@@ -22,9 +22,9 @@ export function HouseCard({ house }: { house: HouseSummary }) {
     <Link
       to="/listings/$id"
       params={{ id: house.id }}
-      className="group flex flex-col overflow-hidden rounded-2xl border bg-card shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-glow"
+      className="group flex flex-col overflow-hidden rounded-[20px] bg-card shadow-sm border border-border/40 transition-all hover:-translate-y-0.5 hover:shadow-glow"
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+      <div className="relative h-48 w-full overflow-hidden bg-muted">
         {signed ? (
           <img
             src={signed}
@@ -35,26 +35,32 @@ export function HouseCard({ house }: { house: HouseSummary }) {
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">no photo</div>
         )}
-        <Badge className="absolute left-3 top-3 bg-verified text-verified-foreground capitalize border-0">
-          {house.house_type}
-        </Badge>
+        <button className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full hover:bg-black/10 transition-colors z-10">
+          <Heart className="h-5 w-5 text-white stroke-[2.5px] drop-shadow-md" />
+        </button>
       </div>
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="font-display text-lg font-semibold leading-tight">{house.title}</h3>
-        </div>
-        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <MapPin className="h-3.5 w-3.5" />
-          <span>{house.neighborhood}, {house.city}</span>
-        </div>
-        <div className="mt-auto flex items-end justify-between pt-2">
-          <div>
-            <div className="font-display text-xl font-bold text-primary">{fmtFCFA(house.rent_fcfa)}</div>
-            <div className="text-xs text-muted-foreground">per month</div>
+      <div className="flex flex-1 flex-col p-4 pb-5 gap-3">
+        <div>
+          <h3 className="font-sans text-[17px] font-bold leading-tight text-ink">{house.title}</h3>
+          <div className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5" />
+            <span>{house.neighborhood}, {house.city}</span>
           </div>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Users className="h-3.5 w-3.5" />
-            up to {house.max_occupants}
+        </div>
+        
+        <div>
+          <span className="font-sans text-[17px] font-bold text-primary">{fmtFCFA(house.rent_fcfa)}</span>
+          <span className="text-sm text-muted-foreground font-medium ml-1">/ month</span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 mt-auto pt-1">
+          <div className="flex items-center gap-1.5 bg-accent/60 text-ink text-xs font-semibold rounded-md px-2.5 py-1.5">
+            <Users className="h-3.5 w-3.5 text-muted-foreground" />
+            {house.max_occupants} Room{house.max_occupants !== 1 ? 's' : ''}
+          </div>
+          <div className="flex items-center gap-1.5 bg-accent/60 text-ink text-xs font-semibold rounded-md px-2.5 py-1.5">
+            <Wifi className="h-3.5 w-3.5 text-muted-foreground" />
+            Wi-Fi
           </div>
         </div>
       </div>

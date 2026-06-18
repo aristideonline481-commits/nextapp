@@ -4,7 +4,7 @@ import { auth, db } from "@/integrations/firebase/client";
 import { onAuthStateChanged, signOut as firebaseSignOut } from "firebase/auth";
 import { doc, getDoc, collection, query, where, limit, getDocs } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
-import { LogOut, Home as HomeIcon, Plus, Search, History, ShieldCheck, Menu } from "lucide-react";
+import { LogOut, Home as HomeIcon, Plus, Search, History, ShieldCheck, Menu, Bell, User } from "lucide-react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -59,27 +59,22 @@ export function AppHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-white/20 glass supports-[backdrop-filter]:bg-cream/60">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link to="/" className="flex items-baseline gap-1 group">
-            <span className="font-display text-2xl font-bold tracking-tight text-ink transition-transform group-hover:scale-105">NeXt</span>
-            <span className="font-display text-2xl font-bold tracking-tight text-gradient transition-transform group-hover:scale-105">paSs</span>
-          </Link>
-
-          {/* Unified Hamburger Menu */}
-          <div className="flex items-center">
+      <header className="sticky top-0 z-40 w-full bg-background border-b border-border/20">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 relative">
+          
+          {/* Left: Hamburger Menu */}
+          <div className="flex items-center z-10">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10 text-ink">
+                <Button variant="ghost" size="icon" className="h-10 w-10 text-ink -ml-2">
                   <Menu className="h-6 w-6" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl">
-                {/* Primary Navigation inside Menu */}
+              <DropdownMenuContent align="start" className="w-56 p-2 rounded-xl mt-2">
                 <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
                   <Link to="/browse" className="flex items-center w-full">
-                    <Search className="mr-3 h-5 w-5" />
-                    <span className="text-base font-medium">Browse</span>
+                    <HomeIcon className="mr-3 h-5 w-5" />
+                    <span className="text-base font-medium">Home</span>
                   </Link>
                 </DropdownMenuItem>
                 
@@ -87,7 +82,7 @@ export function AppHeader() {
                   <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
                     <Link to="/share" className="flex items-center w-full">
                       <Plus className="mr-3 h-5 w-5" />
-                      <span className="text-base font-medium">Share</span>
+                      <span className="text-base font-medium">Post Room</span>
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -113,8 +108,8 @@ export function AppHeader() {
                 {isAdmin && (
                   <DropdownMenuItem asChild className="cursor-pointer py-3 rounded-lg">
                     <Link to="/admin" className="flex items-center w-full">
-                      <ShieldCheck className="mr-3 h-5 w-5 text-verified" />
-                      <span className="text-base font-medium text-verified">Admin Team</span>
+                      <ShieldCheck className="mr-3 h-5 w-5 text-primary" />
+                      <span className="text-base font-medium text-primary">Admin Team</span>
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -143,15 +138,27 @@ export function AppHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+
+          {/* Center: Logo */}
+          <Link to="/" className="flex items-baseline absolute left-1/2 -translate-x-1/2 group">
+            <span className="font-display text-2xl font-bold tracking-tight text-ink">On</span>
+            <span className="font-display text-2xl font-bold tracking-tight text-primary">Move</span>
+            <span className="font-display text-2xl font-bold tracking-tight text-ink">In</span>
+          </Link>
+
+          {/* Right: Bell Icon */}
+          <div className="flex items-center z-10">
+             <Button variant="ghost" size="icon" className="h-10 w-10 text-ink -mr-2">
+               <Bell className="h-6 w-6" />
+             </Button>
+          </div>
         </div>
       </header>
 
       {/* Mobile Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden items-center justify-around bg-background/95 backdrop-blur-md border-t border-border/50 h-[68px] pb-safe">
-        <MobileNavItem to="/browse" active={isBrowse} icon={<Search className="h-5 w-5" />} label="Browse" />
-        {user && <MobileNavItem to="/share" active={isShare} icon={<Plus className="h-5 w-5" />} label="Share" />}
-        {user && hasListings && <MobileNavItem to="/my-listings" active={isMine} icon={<HomeIcon className="h-5 w-5" />} label="Mine" />}
-        {user && <MobileNavItem to="/history" active={isHistory} icon={<History className="h-5 w-5" />} label="History" />}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden items-center justify-around bg-background border-t border-border/50 h-[72px] pb-safe">
+        <MobileNavItem to="/browse" active={isBrowse} icon={<HomeIcon className="h-6 w-6" />} label="Home" />
+        <MobileNavItem to="/profile" active={!isBrowse} icon={<User className="h-6 w-6" />} label="Profile" />
       </div>
     </>
   );

@@ -10,8 +10,8 @@
  */
 
 @theme inline {
-  --font-display: "Fraunces", ui-serif, Georgia, serif;
-  --font-sans: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -71,9 +71,9 @@
   --popover: oklch(0.99 0.006 85);
   --popover-foreground: oklch(0.22 0.04 260);
 
-  /* Orange — primary brand */
-  --primary: oklch(0.66 0.18 40);
-  --primary-foreground: oklch(0.99 0.005 80);
+  /* Green — primary brand */
+  --primary: oklch(0.62 0.14 145);
+  --primary-foreground: oklch(0.99 0.005 145);
 
   /* Navy secondary */
   --secondary: oklch(0.22 0.04 260);
@@ -94,7 +94,7 @@
 
   --border: oklch(0.88 0.015 80);
   --input: oklch(0.88 0.015 80);
-  --ring: oklch(0.66 0.18 40);
+  --ring: oklch(0.62 0.14 145);
 
   --sidebar: oklch(0.22 0.04 260);
   --sidebar-foreground: oklch(0.96 0.012 85);
@@ -103,7 +103,7 @@
   --sidebar-accent: oklch(0.28 0.04 260);
   --sidebar-accent-foreground: oklch(0.96 0.012 85);
   --sidebar-border: oklch(0.3 0.04 260);
-  --sidebar-ring: oklch(0.66 0.18 40);
+  --sidebar-ring: oklch(0.62 0.14 145);
 }
 
 .dark {
@@ -115,7 +115,7 @@
   --card-foreground: oklch(0.96 0.012 85);
   --popover: oklch(0.22 0.04 260);
   --popover-foreground: oklch(0.96 0.012 85);
-  --primary: oklch(0.7 0.18 40);
+  --primary: oklch(0.66 0.14 145);
   --primary-foreground: oklch(0.16 0.03 260);
   --secondary: oklch(0.96 0.012 85);
   --secondary-foreground: oklch(0.16 0.03 260);
@@ -129,11 +129,11 @@
   --destructive-foreground: oklch(0.99 0.005 80);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.7 0.18 40);
+  --ring: oklch(0.66 0.14 145);
 }
 
 @layer base {
-  @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter+Tight:wght@400;500;600;700&display=swap");
+  @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap");
 
   * { border-color: var(--color-border); }
   html, body { background-color: var(--color-background); color: var(--color-foreground); }

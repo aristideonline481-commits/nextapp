@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { db } from "@/integrations/firebase/client";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
 import { HouseCard, type HouseSummary } from "@/components/HouseCard";
-import { QuickContact } from "@/components/QuickContact";
 import { Loader2, Search as SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo } from "react";
@@ -52,34 +51,38 @@ function Browse() {
   }, [data, q]);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <div className="mb-10">
-        <QuickContact />
+    <main className="mx-auto max-w-md px-4 py-6 sm:px-6 w-full">
+      <div className="relative w-full mb-8">
+        <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+        <Input 
+          value={q} 
+          onChange={(e) => setQ(e.target.value)} 
+          placeholder="Search location, area or school..." 
+          className="h-14 rounded-2xl pl-12 bg-accent/40 border-0 text-base shadow-none" 
+        />
       </div>
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">Available rooms</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Real listings from graduating students. Tap one to see the full breakdown.</p>
-        </div>
-        <div className="relative w-full sm:w-72">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Neighborhood or type…" className="h-11 rounded-full pl-9" />
-        </div>
-      </div>
+      <h2 className="font-sans text-[22px] font-bold tracking-tight text-ink mb-5">Available Rooms</h2>
 
       {isLoading ? (
         <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
       ) : filtered.length === 0 ? (
-        <div className="mt-12 rounded-2xl border border-dashed bg-card p-12 text-center">
-          <p className="font-display text-xl font-semibold">No rooms yet</p>
-          <p className="mt-1 text-sm text-muted-foreground">Be the first to pass the keys.</p>
-          <Link to="/share" className="mt-4 inline-flex rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">Share your room</Link>
+        <div className="mt-8 rounded-[20px] border border-dashed bg-card p-12 text-center">
+          <p className="font-sans text-[19px] font-bold">No rooms yet</p>
+          <p className="mt-1 text-sm text-muted-foreground">Be the first to post a room.</p>
+          <Link to="/share" className="mt-6 inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-transform hover:scale-105">Post your room</Link>
         </div>
       ) : (
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((h) => <HouseCard key={h.id} house={h} />)}
-        </div>
+        <>
+          <div className="grid grid-cols-1 gap-5">
+            {filtered.map((h) => <HouseCard key={h.id} house={h} />)}
+          </div>
+          <div className="mt-8 text-center pb-8">
+            <button className="text-primary font-semibold text-[15px] hover:underline">
+              View more rooms &gt;
+            </button>
+          </div>
+        </>
       )}
     </main>
   );
